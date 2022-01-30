@@ -131,3 +131,6 @@ dmypy.json
 # blog.noizze.net
 blog/db.sqlite3
 blog/.SECRET_KEY
+
+# vscode
+.vscode
