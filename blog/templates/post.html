@@ -1,0 +1,70 @@
+{% include "header.html" %}
+
+<!-- Main -->
+<main>
+    <hgroup>
+        <small>{{conf.date}}</small>
+        <h1>{{conf.title}}</h1>
+{% if conf.taxonomy.category %}
+        <h3>Category:
+            {% for c in conf.taxonomy.category %}
+                {{ c }}
+            {% endfor %}
+        </h3>
+{% else %}
+        <h3></h3>
+{% endif %}
+    </hgroup>
+
+{% if conf.media_order %}
+<!--
+    <figure>
+        <amp-img src="https://source.unsplash.com/pGM4sjt_BdQ/2000x1000"
+                srcset="https://source.unsplash.com/pGM4sjt_BdQ/2000x1000 2000w,
+                        https://source.unsplash.com/pGM4sjt_BdQ/1000x500 1000w,
+                        https://source.unsplash.com/pGM4sjt_BdQ/500x250 500w"
+                width="2000"
+                height="1000"
+                layout="responsive"
+                alt="Cupcake">
+        </amp-img>
+        <figcaption>Image from <a href="https://unsplash.com">unsplash.com</a></figcaption>
+    </figure>
+-->
+    <figure>
+        <amp-img src="/blog/{{post_name}}/{{ conf.media_order }}"
+            width="{{ conf.media_dimension.width }}"
+            height="{{ conf.media_dimension.height }}"
+            layout="responsive">
+        </amp-img>
+    </figure>
+{% endif %}
+
+<article id='article'>
+    <section markdown="block">
+        {{ md|safe }}
+    </section>
+
+{% if conf.taxonomy.tag %}
+<p>
+    Tag:
+    {% for tag in conf.taxonomy.tag %}
+    <kbd>{{ tag }}</kbd>
+    {% endfor %}
+</p>
+{% endif %}
+</article>
+
+<p>
+    {% if navigation.prev %}
+        <a href="/{{ navigation.prev }}" role="button">PREV</a>
+    {% endif %}
+    {% if navigation.next %}
+        <a href="/{{ navigation.next }}" role="button">NEXT</a>
+    {% endif %}
+</p>
+
+
+</main>
+
+{% include "footer.html" %}

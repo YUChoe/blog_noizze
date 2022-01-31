@@ -1,0 +1,66 @@
+{% include "header.html" %}
+<style>
+    .article_npadding {
+        padding:
+            calc(var(--block-spacing-vertical) * 0.5)
+            calc(var(--block-spacing-horizontal) * 0.5);
+    }
+    .button_npadding {
+        padding:
+            calc(var(--form-element-spacing-vertical) * 0.5)
+            calc(var(--form-element-spacing-horizontal)* 0.5);
+    }
+</style>
+<main>
+
+{% for conf in lastst_three %}
+    <article class='article_npadding'>
+        <hgroup>
+            <small>{{conf.date}}</small>
+            <h1>{{conf.title}}</h1>
+    {% if conf.taxonomy.category %}
+        <h3>Category:
+            {% for c in conf.taxonomy.category %}
+                {{ c }}
+            {% endfor %}
+        </h3>
+    {% else %}
+        <h3></h3>
+    {% endif %}
+
+        </hgroup>
+<p>
+        <a href="{{ conf.url }}" role="button" class="secondary outline button_npadding">READ</a>
+    </p>
+
+    {% if conf.taxonomy.tag %}
+        <p>
+            Tag:
+        {% for tag in conf.taxonomy.tag %}
+            <kbd>{{ tag }}</kbd>
+        {% endfor %}
+        </p>
+    {% endif %}
+
+
+    </article>
+{% endfor %}
+
+
+<article>
+    <hgroup>
+        <h1>Popular Tags</h1>
+        <h3></h3>
+    </hgroup>
+        {% if tag_cloud %}
+        <p>
+        {% for tag in tag_cloud %}
+            <kbd>{{ tag.0 }}x{{ tag.1 }}</kbd>
+        {% endfor %}
+        </p>
+    {% endif %}
+</article>
+
+</main>
+
+{% include "footer.html" %}
