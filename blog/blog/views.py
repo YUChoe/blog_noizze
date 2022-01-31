@@ -80,8 +80,16 @@ def view_post(request, post_name):
 
     if 'media_order' in conf:
         filepath = os.path.join(_dir_prefix, post_name, conf['media_order'])
-        print('MMMMM', filepath)
-        media_dimension = get_info_png(filepath)
+
+        filename, file_extension = os.path.splitext(filepath)
+        print('MMMMM', filepath, filename, file_extension)
+        if file_extension == '.png':
+            media_dimension = get_info_png(filepath)
+        elif file_extension == '.jpg':
+            media_dimension = {
+                'height': 1000,
+                'width': 2000
+            }
         print(media_dimension)
         conf['media_dimension'] = media_dimension
 
