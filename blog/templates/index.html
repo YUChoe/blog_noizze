@@ -1,8 +1,20 @@
 {% include "header.html" %}
+<style>
+    .article_npadding {
+        padding:
+            calc(var(--block-spacing-vertical) * 0.5)
+            calc(var(--block-spacing-horizontal) * 0.5);
+    }
+    .button_npadding {
+        padding:
+            calc(var(--form-element-spacing-vertical) * 0.5)
+            calc(var(--form-element-spacing-horizontal)* 0.5);
+    }
+</style>
 <main>
 
 {% for conf in lastst_three %}
-    <article>
+    <article class='article_npadding'>
         <hgroup>
             <small>{{conf.date}}</small>
             <h1>{{conf.title}}</h1>
@@ -18,7 +30,7 @@
 
         </hgroup>
 <p>
-        <a href="{{ conf.url }}" role="button" class="secondary outline">READ</a>
+        <a href="{{ conf.url }}" role="button" class="secondary outline button_npadding">READ</a>
     </p>
 
     {% if conf.taxonomy.tag %}
