@@ -1,1 +1,15 @@
 <h1>post</h1>
+
+<h3>title: {{conf.title}} </h3>
+<h3>date: {{conf.date}}</h3>
+<h3>category: {{conf.taxonomy.category}}</h3>
+<h3>tag:</h3>
+<ul>
+    {% for tag in conf.taxonomy.tag %}
+    <li>{{ tag }}</li>
+    {% endfor %}
+</ul>
+
+<pre>
+    {{ md }}
+</pre>
