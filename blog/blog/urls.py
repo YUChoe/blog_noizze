@@ -20,6 +20,7 @@ from . import views
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
+    path("", views.view_index),
     path("blog/<str:post_name>", views.view_post),
     path("blog/<str:post_name>/<str:attach_name>", views.view_attach),
 ]

@@ -5,11 +5,15 @@
     <hgroup>
         <small>{{conf.date}}</small>
         <h1>{{conf.title}}</h1>
+{% if conf.taxonomy.category %}
         <h3>Category:
             {% for c in conf.taxonomy.category %}
                 {{ c }}
             {% endfor %}
         </h3>
+{% else %}
+        <h3></h3>
+{% endif %}
     </hgroup>
 
 {% if conf.media_order %}
@@ -41,17 +45,24 @@
         {{ md|safe }}
     </section>
 
-
+{% if conf.taxonomy.tag %}
 <p>
     Tag:
     {% for tag in conf.taxonomy.tag %}
     <kbd>{{ tag }}</kbd>
     {% endfor %}
 </p>
-
-
+{% endif %}
 </article>
 
+<p>
+    {% if navigation.prev %}
+        <a href="/{{ navigation.prev }}" role="button">PREV</a>
+    {% endif %}
+    {% if navigation.next %}
+        <a href="/{{ navigation.next }}" role="button">NEXT</a>
+    {% endif %}
+</p>
 
 
 </main>

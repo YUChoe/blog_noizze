@@ -4,8 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    {% if conf and conf.title %}
     <title>{{ conf.title }} | NOIZZE - blog</title>
-
+    {% else %}
+    <title>main | NOIZZE - blog</title>
+    {% endif %}
     <!-- AMP runtime -->
     <script async src="https://cdn.ampproject.org/v0.js"></script>
 
@@ -48,7 +51,7 @@
           </li>
         </ul>
         <ul>
-          <li><h1>BLOG.NOIZZE.NET</h1></li>
+          <li><h1><a href='/'>BLOG.NOIZZE.NET</a></h1></li>
         </ul>
         <ul>
           <li>

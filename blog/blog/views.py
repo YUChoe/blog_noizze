@@ -9,11 +9,11 @@ import mimetypes
 from django.http import HttpResponse, FileResponse
 import binascii
 from sys import byteorder
-
+from itertools import islice
 
 # global
 _dir_prefix = '../pages/blog'
-
+att_extensions = ['png', 'jpg', 'gif']
 
 def get_info_png(filepath):
     val = {}
@@ -35,7 +35,6 @@ def redirect_404(request, conf):
 
 
 def view_attach(request, post_name, attach_name):
-    att_extensions = ['png', 'jpg', 'gif']
     attfilepath = os.path.join(_dir_prefix, post_name, attach_name)
     if os.path.isfile(attfilepath):
         for ext in att_extensions:
@@ -49,10 +48,17 @@ def view_attach(request, post_name, attach_name):
 
 
 def view_post(request, post_name):
-    print(post_name)
+    # print(post_name)
     # FIXIT
-    if '.css.map' in post_name:
+    if '.css.map' in post_name[-8:]:
         return HttpResponse(open(os.path.join(_dir_prefix, post_name)).read())
+    for ext in att_extensions:
+        if ext in post_name[-3:]:
+            # redirect
+            response = HttpResponse(status=302)
+            response['Location'] = '{}/{}'.format(request.META['HTTP_REFERER'], post_name)
+            return response
+
 
     conf_json = os.path.join(_dir_prefix, post_name, 'conf.json')
     post_md = os.path.join(_dir_prefix, post_name, 'post.md')
@@ -79,4 +85,40 @@ def view_post(request, post_name):
         print(media_dimension)
         conf['media_dimension'] = media_dimension
 
-    return render(request, "post.html", {'conf': conf, 'md': md, 'post_name': post_name})
+    ordered_list = json.load(open(os.path.join(_dir_prefix, 'ordered_list.json')))
+    cidx = 0
+    this_post_path = os.path.join(_dir_prefix, post_name)[9:]
+    for item in ordered_list:
+        # print(f'[{item["path"]}] : [{this_post_path}]')
+        if item['path'] == this_post_path:
+            cidx = item['idx']
+            break
+    else:
+        cidx = None
+    print('current idx:', cidx)
+    navigation = {}
+    if cidx and cidx - 1 > 0:
+        navigation['prev'] = ordered_list[cidx - 1]['path']
+    if cidx and cidx + 1 < len(ordered_list):
+        navigation['next'] = ordered_list[cidx + 1]['path']
+    print(navigation)
+    return render(request, "post.html", {'conf': conf, 'md': md, 'post_name': post_name, 'navigation': navigation})
+
+
+def view_index(request):
+    lastst_three = []
+    ordered_list = json.load(open(os.path.join(_dir_prefix, 'ordered_list.json')))
+    for item in ordered_list[::-1][:5]:
+        conf_json = os.path.join(_dir_prefix[:-5], item['path'], 'conf.json')
+        with open(conf_json) as fp:
+            conf = json.load(fp)
+        conf['url'] = item['path']
+        lastst_three.append(conf)
+
+    tag_dict = json.load(open(os.path.join(_dir_prefix, 'tag_list.json')))
+    tag_cloud = []
+    for tagitem in islice(tag_dict.items(), 20):  # top ten
+        tag = tagitem[0]
+        tag_cloud.append((tag, len(tag_dict[tag])))
+
+    return render(request, "index.html", {'lastst_three': lastst_three, 'tag_cloud': tag_cloud})
