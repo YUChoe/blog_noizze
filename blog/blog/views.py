@@ -5,6 +5,7 @@ import json
 import marko
 from marko.ext import codehilite
 import mimetypes
+import re
 
 from django.http import HttpResponse, FileResponse
 import binascii
@@ -13,7 +14,7 @@ from itertools import islice
 
 # global
 _dir_prefix = '../pages/blog'
-att_extensions = ['png', 'jpg', 'gif']
+att_extensions = ['png', 'jpg', 'gif', 'svg']
 
 def get_info_png(filepath):
     val = {}
@@ -46,6 +47,33 @@ def view_attach(request, post_name, attach_name):
                 return response
 
 
+def replace_strange_char(md):
+    md = md.replace('‘', "'")
+    md = md.replace('’', "'")
+    md = md.replace('“', '"')
+    md = md.replace('”', '"')
+    return md
+
+
+def replace_youtube(md):
+    name_regex = "[^]]*"
+    url_regex = "http[s]?://[^)]+"
+    markup_regex = '\[({0})]\(\s*({1})\s*\)'.format(name_regex, url_regex)
+
+    matches = []
+    for match in re.findall(markup_regex, md):
+        if ('youtu.be' in match[1] or
+                'youtube' in match[1]):
+            print('Youtube:', match)
+            matches.append(match)
+
+    template_iframe = """<iframe width="560" height="315" src="https://www.youtube.com/embed/{0}?controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>"""
+    for match in matches:
+        youtube_idx = match[1].split('/')[-1]
+        md = md.replace('![{}]({})'.format(match[0], match[1]), template_iframe.format(youtube_idx, match[0]))
+
+    return md
+
 
 def view_post(request, post_name):
     # print(post_name)
@@ -75,17 +103,24 @@ def view_post(request, post_name):
 
     with open(post_md) as fp:
         md = fp.read()
+        md = replace_strange_char(md)
+        md = replace_youtube(md)
         func_markdown = marko.Markdown(extensions=['codehilite'])
-        md = func_markdown(md)
+        try:
+            md = func_markdown(md)
+        except ValueError as e:
+            # error log
+            print(e)
 
     if 'media_order' in conf:
+        conf['media_order'] = conf['media_order'].split(',')[0]  # show only the first media
         filepath = os.path.join(_dir_prefix, post_name, conf['media_order'])
 
         filename, file_extension = os.path.splitext(filepath)
         print('MMMMM', filepath, filename, file_extension)
         if file_extension == '.png':
             media_dimension = get_info_png(filepath)
-        elif file_extension == '.jpg':
+        elif file_extension == '.jpg' or file_extension == '.svg':
             media_dimension = {
                 'height': 1000,
                 'width': 2000
@@ -103,13 +138,13 @@ def view_post(request, post_name):
             break
     else:
         cidx = None
-    print('current idx:', cidx)
+    # print('current idx:', cidx)
     navigation = {}
     if cidx and cidx - 1 > 0:
         navigation['prev'] = ordered_list[cidx - 1]['path']
     if cidx and cidx + 1 < len(ordered_list):
         navigation['next'] = ordered_list[cidx + 1]['path']
-    print(navigation)
+    # print(navigation)
     return render(request, "post.html", {'conf': conf, 'md': md, 'post_name': post_name, 'navigation': navigation})
 
 
