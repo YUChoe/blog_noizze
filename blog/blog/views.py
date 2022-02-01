@@ -56,13 +56,13 @@ def replace_strange_char(md):
 
 
 def replace_youtube(md):
-    name_regex = "[^]]+"
+    name_regex = "[^]]*"
     url_regex = "http[s]?://[^)]+"
     markup_regex = '\[({0})]\(\s*({1})\s*\)'.format(name_regex, url_regex)
 
     matches = []
     for match in re.findall(markup_regex, md):
-        # print(match)
+        print('Youtube:', match)
         matches.append(match)
 
     template_iframe = """<iframe width="560" height="315" src="https://www.youtube.com/embed/{0}?controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>"""
