@@ -5,6 +5,7 @@ import json
 import marko
 from marko.ext import codehilite
 import mimetypes
+import re
 
 from django.http import HttpResponse, FileResponse
 import binascii
@@ -54,6 +55,24 @@ def replace_strange_char(md):
     return md
 
 
+def replace_youtube(md):
+    name_regex = "[^]]+"
+    url_regex = "http[s]?://[^)]+"
+    markup_regex = '\[({0})]\(\s*({1})\s*\)'.format(name_regex, url_regex)
+
+    matches = []
+    for match in re.findall(markup_regex, md):
+        # print(match)
+        matches.append(match)
+
+    template_iframe = """<iframe width="560" height="315" src="https://www.youtube.com/embed/{0}?controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>"""
+    for match in matches:
+        youtube_idx = match[1].split('/')[-1]
+        md = md.replace('![{}]({})'.format(match[0], match[1]), template_iframe.format(youtube_idx, match[0]))
+
+    return md
+
+
 def view_post(request, post_name):
     # print(post_name)
     # FIXIT
@@ -83,6 +102,7 @@ def view_post(request, post_name):
     with open(post_md) as fp:
         md = fp.read()
         md = replace_strange_char(md)
+        md = replace_youtube(md)
         func_markdown = marko.Markdown(extensions=['codehilite'])
         try:
             md = func_markdown(md)
