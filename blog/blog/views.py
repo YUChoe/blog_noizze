@@ -46,6 +46,13 @@ def view_attach(request, post_name, attach_name):
                 return response
 
 
+def replace_strange_char(md):
+    md = md.replace('‘', "'")
+    md = md.replace('’', "'")
+    md = md.replace('“', '"')
+    md = md.replace('”', '"')
+    return md
+
 
 def view_post(request, post_name):
     # print(post_name)
@@ -75,10 +82,16 @@ def view_post(request, post_name):
 
     with open(post_md) as fp:
         md = fp.read()
+        md = replace_strange_char(md)
         func_markdown = marko.Markdown(extensions=['codehilite'])
-        md = func_markdown(md)
+        try:
+            md = func_markdown(md)
+        except ValueError as e:
+            # error log
+            print(e)
 
     if 'media_order' in conf:
+        conf['media_order'] = conf['media_order'].split(',')[0]  # show only the first media
         filepath = os.path.join(_dir_prefix, post_name, conf['media_order'])
 
         filename, file_extension = os.path.splitext(filepath)
