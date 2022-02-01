@@ -1,8 +1,10 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="{% static "favicon_64.png" %}">
 
     {% if conf and conf.title %}
     <title>{{ conf.title }} | NOIZZE - blog</title>
@@ -23,11 +25,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
 
     <style amp-custom>
-        /*!
-     * Pico.css v1.4.4 (https://picocss.com)
-     * Copyright 2019-2021 - Licensed under MIT
 {% include "pico.css" %}
-    /*# sourceMappingURL=pico.google-amp.min.css.map */
+/*# sourceMappingURL={% static "pico.google-amp.min.css.map" %} */
     </style>
     <style>
 {% include "syntax.css" %}
