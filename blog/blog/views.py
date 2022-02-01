@@ -103,13 +103,13 @@ def view_post(request, post_name):
             break
     else:
         cidx = None
-    print('current idx:', cidx)
+    # print('current idx:', cidx)
     navigation = {}
     if cidx and cidx - 1 > 0:
         navigation['prev'] = ordered_list[cidx - 1]['path']
     if cidx and cidx + 1 < len(ordered_list):
         navigation['next'] = ordered_list[cidx + 1]['path']
-    print(navigation)
+    # print(navigation)
     return render(request, "post.html", {'conf': conf, 'md': md, 'post_name': post_name, 'navigation': navigation})
 
 
