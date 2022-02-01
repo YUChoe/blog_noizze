@@ -62,8 +62,10 @@ def replace_youtube(md):
 
     matches = []
     for match in re.findall(markup_regex, md):
-        print('Youtube:', match)
-        matches.append(match)
+        if ('youtu.be' in match[1] or
+                'youtube' in match[1]):
+            print('Youtube:', match)
+            matches.append(match)
 
     template_iframe = """<iframe width="560" height="315" src="https://www.youtube.com/embed/{0}?controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>"""
     for match in matches:
