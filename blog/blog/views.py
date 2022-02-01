@@ -13,7 +13,7 @@ from itertools import islice
 
 # global
 _dir_prefix = '../pages/blog'
-att_extensions = ['png', 'jpg', 'gif']
+att_extensions = ['png', 'jpg', 'gif', 'svg']
 
 def get_info_png(filepath):
     val = {}
@@ -85,7 +85,7 @@ def view_post(request, post_name):
         print('MMMMM', filepath, filename, file_extension)
         if file_extension == '.png':
             media_dimension = get_info_png(filepath)
-        elif file_extension == '.jpg':
+        elif file_extension == '.jpg' or file_extension == '.svg':
             media_dimension = {
                 'height': 1000,
                 'width': 2000
