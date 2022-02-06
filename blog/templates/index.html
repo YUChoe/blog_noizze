@@ -1,7 +1,7 @@
 {% include "header.html" %}
 
 {% comment origin %}
-{% for conf in lastst_three %}
+{% for conf in current_post_list %}
     <article class='article_npadding'>
         <hgroup>
             <small>{{conf.date}}</small>
@@ -41,7 +41,7 @@
   <div class='list-container'>
     <ul class='list'>
 
-{% for conf in lastst_three %}
+{% for conf in current_post_list %}
       <li class='list-item'>
         <article>
             <div class='meta'>
@@ -52,7 +52,7 @@
             </div>
             <header class='list-item-header'>
               <h3 class='list-item-title'>
-                <a href='{{ conf.url }}'>{{conf.title}}</a>
+                <a href='/{{ conf.url }}'>{{conf.title}}</a>
               </h3>
   {% if conf.taxonomy.tag %}
       <span class='tags'><sup>Tag:
@@ -70,30 +70,49 @@
 
     </ul>
 
-{% comment %}
-<nav class='pagination'>
-  <div class='page-links'>
+    <nav class='pagination'>
+      <div class='page-links'>
 
-      <span class='page-link current'>
-        <span class='screen-reader'>Current page: </span>1</span>
+{% if navigation.prev_page %}
+    <a class='page-link' href='/page/{{navigation.prev_page.page_num}}'>
+      <svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
+      <span class='screen-reader'>Previous page</span>
+    </a>
+{% endif %}
 
-      <a class='page-link' href='/post/page/2/'>
-        <span class='screen-reader'>Page: </span>2</a>
+{% if navigation.prev_prev_page %}
+        <a class='page-link' href='/page/{{navigation.prev_prev_page.page_num}}'>
+          <span class='screen-reader'>Page: </span>{{navigation.prev_prev_page.page_num}}</a>
+{% endif %}
+{% if navigation.prev_page %}
+        <a class='page-link' href='/page/{{navigation.prev_page.page_num}}'>
+          <span class='screen-reader'>Page: </span>{{navigation.prev_page.page_num}}</a>
+{% endif %}
 
-      <a class='page-link' href='/post/page/3/'>
-        <span class='screen-reader'>Page: </span>3</a>
+        <span class='page-link current'>
+          <span class='screen-reader'>
+            Current page:
+          </span>
+          {{ navigation.current_page }}
+        </span>
 
-    <a class='page-link' href='/post/page/2/'>
-      <span class='screen-reader'>Next page</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+{% if navigation.next_page %}
+        <a class='page-link' href='/page/{{navigation.next_page.page_num}}'>
+          <span class='screen-reader'>Page: </span>{{navigation.next_page.page_num}}</a>
+{% endif %}
+{% if navigation.next_next_page %}
+        <a class='page-link' href='/page/{{navigation.next_next_page.page_num}}'>
+          <span class='screen-reader'>Page: </span>{{navigation.next_next_page.page_num}}</a>
+{% endif %}
 
-  <line x1="4" y1="12" x2="20" y2="12"/>
-  <polyline points="14 6 20 12 14 18"/>
-
-</svg>
-</a>
-  </div>
-</nav>
-{% endcomment %}
+{% if navigation.next_page %}
+        <a class='page-link' href='/page/{{navigation.next_page.page_num}}'>
+          <span class='screen-reader'>Next page</span>
+            <svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>  <line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
+        </a>
+{% endif %}
+      </div>
+    </nav>
 
   </div>
 
