@@ -29,7 +29,7 @@ if os.path.isfile(".SECRET_KEY"):
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['blog.noizze.net', 'localhost']
+ALLOWED_HOSTS = ['blog.noizze.net', 'localhost', '127.0.0.1']
 
 
 # Application definition
