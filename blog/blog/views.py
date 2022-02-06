@@ -6,6 +6,7 @@ import marko
 from marko.ext import codehilite
 import mimetypes
 import re
+import datetime
 
 from django.http import HttpResponse, FileResponse
 import binascii
@@ -67,9 +68,9 @@ def replace_youtube(md):
             print('Youtube:', match)
             matches.append(match)
 
-    template_iframe = """<iframe width="560" height="315" src="https://www.youtube.com/embed/{0}?controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>"""
+    template_iframe = """<iframe width="560" height="315" src="https://www.youtube.com/embed/{0}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>"""
     for match in matches:
-        youtube_idx = match[1].split('/')[-1]
+        youtube_idx = match[1].replace('watch?v=', '').split('/')[-1]
         md = md.replace('![{}]({})'.format(match[0], match[1]), template_iframe.format(youtube_idx, match[0]))
 
     return md
@@ -87,7 +88,6 @@ def view_post(request, post_name):
             response['Location'] = '{}/{}'.format(request.META['HTTP_REFERER'], post_name)
             return response
 
-
     conf_json = os.path.join(_dir_prefix, post_name, 'conf.json')
     post_md = os.path.join(_dir_prefix, post_name, 'post.md')
 
@@ -101,7 +101,8 @@ def view_post(request, post_name):
     if 'published' in conf and not conf['published']:
         redirect_404(request, conf_json)
 
-    with open(post_md) as fp:
+    with open(post_md, encoding='utf-8') as fp:
+        # print("Reading:", post_md)
         md = fp.read()
         md = replace_strange_char(md)
         md = replace_youtube(md)
@@ -111,7 +112,7 @@ def view_post(request, post_name):
         except ValueError as e:
             # error log
             print(e)
-
+    """
     if 'media_order' in conf:
         conf['media_order'] = conf['media_order'].split(',')[0]  # show only the first media
         filepath = os.path.join(_dir_prefix, post_name, conf['media_order'])
@@ -127,24 +128,50 @@ def view_post(request, post_name):
             }
         print(media_dimension)
         conf['media_dimension'] = media_dimension
-
+    """
     ordered_list = json.load(open(os.path.join(_dir_prefix, 'ordered_list.json')))
     cidx = 0
     this_post_path = os.path.join(_dir_prefix, post_name)[9:]
+    if os.name == 'nt':
+        this_post_path = '/'.join([_dir_prefix, post_name])
+        this_post_path = this_post_path[9:]
+
     for item in ordered_list:
-        # print(f'[{item["path"]}] : [{this_post_path}]')
+        # print(f'    [{item["path"]}] : [{this_post_path}]')
         if item['path'] == this_post_path:
             cidx = item['idx']
+            dt = datetime.datetime.fromtimestamp(item['timestamp'])
+            conf['date'] = dt.strftime('%b. %d, %Y')
             break
     else:
         cidx = None
-    # print('current idx:', cidx)
+
+    print('Navigation: current idx:', cidx)
     navigation = {}
+    navigation['curr_url'] = ordered_list[cidx]['path']
+    navigation['canonical'] = 'https://blog.noizze.net/{}'.format(navigation['curr_url'])
+    print('        current_url:', navigation['curr_url'])
+    print('        canonical:', navigation['canonical'])
+
     if cidx and cidx - 1 > 0:
         navigation['prev'] = ordered_list[cidx - 1]['path']
+        # print('        prev:', navigation['prev'])
+        prev_conf_path = os.path.join(_dir_prefix[:-5], ordered_list[cidx - 1]['path'], 'conf.json')
+        # print('        prev_conf_path:', prev_conf_path)
+        if os.path.isfile(prev_conf_path):
+            prev_conf = json.load(open(prev_conf_path))
+            navigation['prev_title'] = prev_conf['title']
+        # print('        prev_title:', (navigation['prev_title'] if 'prev_title' in navigation else ''))
     if cidx and cidx + 1 < len(ordered_list):
         navigation['next'] = ordered_list[cidx + 1]['path']
-    # print(navigation)
+        # print('        next:', navigation['next'])
+        next_conf_path = os.path.join(_dir_prefix[:-5], ordered_list[cidx + 1]['path'], 'conf.json')
+        # print('        next_conf_path:', next_conf_path)
+        if os.path.isfile(next_conf_path):
+            next_conf = json.load(open(next_conf_path))
+            navigation['next_title'] = next_conf['title']
+        print('        next_title:', (navigation['next_title'] if 'next_title' in navigation else ''))
+
     return render(request, "post.html", {'conf': conf, 'md': md, 'post_name': post_name, 'navigation': navigation})
 
 
@@ -156,6 +183,9 @@ def view_index(request):
         with open(conf_json) as fp:
             conf = json.load(fp)
         conf['url'] = item['path']
+        dt = datetime.datetime.fromtimestamp(item['timestamp'])
+        conf['date_shorter'] = dt.strftime('%b. %d, %Y')
+        # print('  ', conf['date_shorter'])
         lastst_three.append(conf)
 
     tag_dict = json.load(open(os.path.join(_dir_prefix, 'tag_list.json')))
