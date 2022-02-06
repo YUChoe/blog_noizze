@@ -1,0 +1,56 @@
+figure figcaption {
+    text-align: center;
+    font-size: .7em;
+}
+
+details {
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    padding: .5em .5em 0;
+}
+
+details :last-child {
+  margin-bottom: 0.5em;
+}
+blockquote em {
+  font-style: normal;
+}
+
+summary {
+    font-weight: bold;
+    margin: -.5em -.5em 0;
+    padding: .5em;
+    cursor: pointer;
+    display: list-item;
+}
+
+details[open] {
+    padding: .5em;
+}
+
+details[open] summary {
+    border-bottom: 1px solid #aaa;
+    margin-bottom: .5em;
+}
+
+.embeddable-buttondown-form input#bd-email{
+  padding-top: 0.325em;
+  padding-bottom: 0.325em;
+
+}
+
+.embeddable-buttondown-form input {
+  font-size: 1em;
+  font-weight: 200;
+  text-transform: none;
+
+
+}
+
+button,input[type=button],input[type=reset],input[type=submit]{border:none;letter-spacing:1px;color:#212121;background:#ffcd00;}
+
+
+#bd-email {
+  width: 50%;
+
+}
