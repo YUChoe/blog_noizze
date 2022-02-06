@@ -175,10 +175,12 @@ def view_post(request, post_name):
     return render(request, "post.html", {'conf': conf, 'md': md, 'post_name': post_name, 'navigation': navigation})
 
 
-def view_index(request):
-    lastst_three = []
+def view_index(request, page_num=1):
+    current_post_list = []
+    paging_cnt = 10
+    _offset = (page_num - 1) * paging_cnt
     ordered_list = json.load(open(os.path.join(_dir_prefix, 'ordered_list.json')))
-    for item in ordered_list[::-1][:5]:
+    for item in ordered_list[::-1][_offset:_offset + paging_cnt]:
         conf_json = os.path.join(_dir_prefix[:-5], item['path'], 'conf.json')
         with open(conf_json) as fp:
             conf = json.load(fp)
@@ -186,7 +188,24 @@ def view_index(request):
         dt = datetime.datetime.fromtimestamp(item['timestamp'])
         conf['date_shorter'] = dt.strftime('%b. %d, %Y')
         # print('  ', conf['date_shorter'])
-        lastst_three.append(conf)
+        current_post_list.append(conf)
+
+    # TODO refacto
+    navigation = {}  # next_page = [(3, true), (4, false)]
+    navigation['current_page'] = page_num
+    navigation['prev_prev_page'] = {}
+    if (_offset + (paging_cnt * -2)) >= 0 and ordered_list[::-1][(_offset + (paging_cnt * -2))]:
+        navigation['prev_prev_page']['page_num'] = page_num - 2
+    navigation['prev_page'] = {}
+    if (_offset + (paging_cnt * -1)) >= 0 and ordered_list[::-1][(_offset + (paging_cnt * -1))]:
+        navigation['prev_page']['page_num'] = page_num - 1
+    navigation['next_page'] = {}
+    if (_offset + paging_cnt) < len(ordered_list) and ordered_list[::-1][_offset + paging_cnt]:  # TODO: out of Index exception
+        navigation['next_page']['page_num'] = page_num + 1
+    navigation['next_next_page'] = {}
+    if (_offset + (paging_cnt * 2)) < len(ordered_list) and ordered_list[::-1][_offset + (paging_cnt * 2)]:
+        navigation['next_next_page']['page_num'] = page_num + 2
+
 
     tag_dict = json.load(open(os.path.join(_dir_prefix, 'tag_list.json')))
     tag_cloud = []
@@ -194,4 +213,4 @@ def view_index(request):
         tag = tagitem[0]
         tag_cloud.append((tag, len(tag_dict[tag])))
 
-    return render(request, "index.html", {'lastst_three': lastst_three, 'tag_cloud': tag_cloud})
+    return render(request, "index.html", {'current_post_list': current_post_list, 'navigation': navigation, 'tag_cloud': tag_cloud})
