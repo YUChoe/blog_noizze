@@ -1,69 +1,95 @@
 {% include "header.html" %}
 
-<!-- Main -->
-<main>
-    <hgroup>
-        <small>{{conf.date}}</small>
-        <h1>{{conf.title}}</h1>
+<main id='main' class='main'>
+  <article lang='en' class='entry'>
+    <header class='header-container'>
+      <div class='header entry-header'>
+        <div class='header-info'>
+          <h1 class='title'>{{ conf.title }}</h1>
+        </div>
+        <div class='meta'>
+          <span class='posted-on'>
+            <svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          <span class='screen-reader'>Posted on </span>
+            <time class='date' datetime='{{conf.date}}'>{{conf.date}}</time>
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <div class='entry-content'>
+      {{ md|safe }}
+{% comment "footnote" %}
+      <div class="footnotes">
+        <hr />
+        <ol>
+        </ol>
+      </div>
+{% endcomment %}
+    </div>
+
+    <footer class='entry-footer-container'>
+      <div class='entry-footer'>
+
 {% if conf.taxonomy.category %}
-        <h3>Category:
-            {% for c in conf.taxonomy.category %}
-                {{ c }}
-            {% endfor %}
-        </h3>
-{% else %}
-        <h3></h3>
+        <div class='categories'>
+          <span class='taxonomyTerm-icon'>
+            <svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'><path d="M22,19a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V5A2,2,0,0,1,4,3H9l2,3h9a2,2,0,0,1,2,2Z"/></svg>
+          </span>
+          <span class='screen-reader'>Categories: </span>
+  {% for c in conf.taxonomy.category %}
+            <a class='category' href='/categories/{{ c }}'>{{ c }}</a>
+  {% endfor %}
 {% endif %}
-    </hgroup>
-
-{% if conf.media_order %}
-<!--
-    <figure>
-        <amp-img src="https://source.unsplash.com/pGM4sjt_BdQ/2000x1000"
-                srcset="https://source.unsplash.com/pGM4sjt_BdQ/2000x1000 2000w,
-                        https://source.unsplash.com/pGM4sjt_BdQ/1000x500 1000w,
-                        https://source.unsplash.com/pGM4sjt_BdQ/500x250 500w"
-                width="2000"
-                height="1000"
-                layout="responsive"
-                alt="Cupcake">
-        </amp-img>
-        <figcaption>Image from <a href="https://unsplash.com">unsplash.com</a></figcaption>
-    </figure>
--->
-    <figure>
-        <amp-img src="/blog/{{post_name}}/{{ conf.media_order }}"
-            width="{{ conf.media_dimension.width }}"
-            height="{{ conf.media_dimension.height }}"
-            layout="responsive">
-        </amp-img>
-    </figure>
-{% endif %}
-
-<article id='article'>
-    <section markdown="block">
-        {{ md|safe }}
-    </section>
+        </div>
 
 {% if conf.taxonomy.tag %}
-<p>
-    Tag:
-    {% for tag in conf.taxonomy.tag %}
-    <kbd>{{ tag }}</kbd>
-    {% endfor %}
-</p>
+        <div class='tags'>
+          <span class='taxonomyTerm-icon'>
+            <svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'><path d="M20.59,13.41l-7.17,7.17a2,2,0,0,1-2.83,0L2,12V2H12l8.59,8.59A2,2,0,0,1,20.59,13.41Z"/><line x1="7" y1="7" x2="7" y2="7"/>            </svg>
+          </span>
+          <span class='screen-reader'>Tags: </span>
+  {% for tag in conf.taxonomy.tag %}
+          <a class='tag' href='/tags/{{ tag }}'>{{ tag }}</a>{% if not forloop.last %}, {% endif %}
+  {% endfor %}
+        </div>
 {% endif %}
-</article>
+      </div>
 
-<p>
-    {% if navigation.prev %}
-        <a href="/{{ navigation.prev }}" role="button">PREV</a>
-    {% endif %}
-    {% if navigation.next %}
-        <a href="/{{ navigation.next }}" role="button">NEXT</a>
-    {% endif %}
-</p>
+    </footer>
 
+  </article>
+
+<nav class='entry-nav-container'>
+  <div class='entry-nav'>
+{% if navigation.prev %}
+    <div class='prev-entry'>
+      <a href='/{{ navigation.prev }}'>
+        <span aria-hidden='true'>
+          <svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>
+          Previous
+        </span>
+        <span class='screen-reader'>Previous post: </span>{{ navigation.prev_title }}</a>
+    </div>
+{% endif %}
+{% if navigation.next %}
+    <div class='next-entry'>
+      <a href='/{{ navigation.next }}'>
+        <span class='screen-reader'>Next post: </span>{{ navigation.next_title }}
+        <span aria-hidden='true'>
+          Next
+          <svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>  <line x1="4" y1="12" x2="20" y2="12"/>  <polyline points="14 6 20 12 14 18"/></svg>
+        </span>
+      </a>
+    </div>
+{% endif %}
+  </div>
+</nav>
 
 </main>
 

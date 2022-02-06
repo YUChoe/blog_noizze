@@ -1,18 +1,6 @@
 {% include "header.html" %}
-<style>
-    .article_npadding {
-        padding:
-            calc(var(--block-spacing-vertical) * 0.5)
-            calc(var(--block-spacing-horizontal) * 0.5);
-    }
-    .button_npadding {
-        padding:
-            calc(var(--form-element-spacing-vertical) * 0.5)
-            calc(var(--form-element-spacing-horizontal)* 0.5);
-    }
-</style>
-<main>
 
+{% comment origin %}
 {% for conf in lastst_three %}
     <article class='article_npadding'>
         <hgroup>
@@ -33,23 +21,99 @@
         <a href="{{ conf.url }}" role="button" class="secondary outline button_npadding">READ</a>
     </p>
 
-    {% if conf.taxonomy.tag %}
-        <p>
-            Tag:
-        {% for tag in conf.taxonomy.tag %}
-            <kbd>{{ tag }}</kbd>
-        {% endfor %}
-        </p>
-    {% endif %}
-
 
     </article>
 {% endfor %}
 
+{% endcomment %}
 
-<article>
+<main id='main' class='main'>
+
+  <header class='header-container'>
+    <div class='header list-header'>
+      <div class='header-info'>
+        <h1 class='title'>NOIZZE Blog</h1>
+      </div>
+    </div>
+  </header>
+
+
+  <div class='list-container'>
+    <ul class='list'>
+
+{% for conf in lastst_three %}
+      <li class='list-item'>
+        <article>
+            <div class='meta'>
+              <span>
+                <span class='screen-reader'>Posted on </span>
+                <time datetime='{{conf.date}}'>{{ conf.date_shorter }}</time>
+              </span>
+            </div>
+            <header class='list-item-header'>
+              <h3 class='list-item-title'>
+                <a href='{{ conf.url }}'>{{conf.title}}</a>
+              </h3>
+  {% if conf.taxonomy.tag %}
+      <span class='tags'><sup>Tag:
+    {% for tag in conf.taxonomy.tag %}
+        {{ tag }}{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+      </sup></span>
+  {% endif %}
+
+
+            </header>
+        </article>
+      </li>
+{% endfor %}
+
+    </ul>
+
+{% comment %}
+<nav class='pagination'>
+  <div class='page-links'>
+
+      <span class='page-link current'>
+        <span class='screen-reader'>Current page: </span>1</span>
+
+      <a class='page-link' href='/post/page/2/'>
+        <span class='screen-reader'>Page: </span>2</a>
+
+      <a class='page-link' href='/post/page/3/'>
+        <span class='screen-reader'>Page: </span>3</a>
+
+    <a class='page-link' href='/post/page/2/'>
+      <span class='screen-reader'>Next page</span><svg class='icon' viewbox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' aria-hidden='true'>
+
+  <line x1="4" y1="12" x2="20" y2="12"/>
+  <polyline points="14 6 20 12 14 18"/>
+
+</svg>
+</a>
+  </div>
+</nav>
+{% endcomment %}
+
+  </div>
+
+{% if tag_cloud %}
+  <div class='footer'>
+    <h2>Popular Tags</h2>
+    <p style='text-align: justify'>
+  {% for tag in tag_cloud %}
+      <span style='padding-right:0.5em'>{{ tag.0 }}<sub>x{{ tag.1 }}</sub></span>
+  {% endfor %}
+    </p>
+  </div>
+{% endif %}
+
+
+</main>
+
+{% comment %}
     <hgroup>
-        <h1>Popular Tags</h1>
+        <h1>
         <h3></h3>
     </hgroup>
         {% if tag_cloud %}
@@ -59,8 +123,6 @@
         {% endfor %}
         </p>
     {% endif %}
-</article>
-
-</main>
+{% endcomment %}
 
 {% include "footer.html" %}
