@@ -12,6 +12,9 @@ from django.http import HttpResponse, FileResponse
 import binascii
 from sys import byteorder
 from itertools import islice
+from collections import OrderedDict
+import operator
+
 
 # global
 _dir_prefix = '../pages/blog'
@@ -209,7 +212,14 @@ def view_index(request, page_num=1):
 
     tag_dict = json.load(open(os.path.join(_dir_prefix, 'tag_list.json')))
     tag_cloud = []
-    for tagitem in islice(tag_dict.items(), 20):  # top ten
+
+    temp = OrderedDict()
+    for tag in tag_dict:
+        temp[tag] = len(tag_dict[tag])
+
+    sorted_temp = OrderedDict(sorted(temp.items(), key=operator.itemgetter(1), reverse=True))
+
+    for tagitem in islice(sorted_temp.items(), 30):  # top 30
         tag = tagitem[0]
         tag_cloud.append((tag, len(tag_dict[tag])))
 
