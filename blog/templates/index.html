@@ -57,7 +57,7 @@
   {% if conf.taxonomy.tag %}
       <span class='tags'><sup>Tag:
     {% for tag in conf.taxonomy.tag %}
-        {{ tag }}{% if not forloop.last %}, {% endif %}
+        <a href='/tags/{{tag}}'>{{ tag }}</a>{% if not forloop.last %}, {% endif %}
     {% endfor %}
       </sup></span>
   {% endif %}
