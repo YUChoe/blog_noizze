@@ -121,7 +121,7 @@
     <h2>Popular Tags</h2>
     <p style='text-align: justify'>
   {% for tag in tag_cloud %}
-      <span style='padding-right:0.5em'>{{ tag.0 }}<sub>x{{ tag.1 }}</sub></span>
+      <span style='padding-right:0.5em'><a href='/tags/{{tag.0}}'>{{ tag.0 }}</a><sub>x{{ tag.1 }}</sub></span>
   {% endfor %}
     </p>
   </div>
