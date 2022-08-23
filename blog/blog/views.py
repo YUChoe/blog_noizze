@@ -15,6 +15,7 @@ from sys import byteorder
 from itertools import islice
 from collections import OrderedDict
 import operator
+import typing
 
 
 # global
@@ -204,6 +205,11 @@ def view_post(request, post_name):
             next_conf = json.load(open(next_conf_path))
             navigation['next_title'] = next_conf['title']
         print('        next_title:', (navigation['next_title'] if 'next_title' in navigation else ''))
+
+    if 'taxonomy' in conf and 'category' in conf['taxonomy']:
+        if not isinstance(conf['taxonomy']['category'], typing.List):
+            print(f'** conf[taxonomy][category] is not List but {type(conf["taxonomy"]["category"])} {conf["taxonomy"]["category"]}')
+            conf['taxonomy']['category'] = [conf['taxonomy']['category']]
 
     return render(request, "post.html", {'conf': conf, 'md': md, 'post_name': post_name, 'navigation': navigation})
 
