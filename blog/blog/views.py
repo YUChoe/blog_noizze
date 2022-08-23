@@ -9,6 +9,7 @@ import re
 import datetime
 
 from django.http import HttpResponse, FileResponse
+from django.shortcuts import redirect
 import binascii
 from sys import byteorder
 from itertools import islice
@@ -77,6 +78,9 @@ def replace_youtube(md):
         md = md.replace('![{}]({})'.format(match[0], match[1]), template_iframe.format(youtube_idx, match[0]))
 
     return md
+
+def view_tags_redirect(request, tag_name):
+    return redirect(f'/tags/{tag_name}')
 
 def view_tags(request, tag_name):
     tag_dict = json.load(open(os.path.join(_dir_prefix, 'tag_list.json')))

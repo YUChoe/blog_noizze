@@ -25,4 +25,5 @@ urlpatterns = [
     path("blog/<str:post_name>", views.view_post),
     path("blog/<str:post_name>/<str:attach_name>", views.view_attach),
     path("tags/<str:tag_name>", views.view_tags),
+    path("tag:<str:tag_name>", views.view_tags_redirect),
 ]
