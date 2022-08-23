@@ -78,6 +78,32 @@ def replace_youtube(md):
 
     return md
 
+def view_tags(request, tag_name):
+    tag_dict = json.load(open(os.path.join(_dir_prefix, 'tag_list.json')))
+    if tag_name not in tag_dict:
+        return HttpResponse(f'tag[{tag_name} not found', status=404)
+    
+    print(isinstance(tag_dict[tag_name], list))
+    tag_dict[tag_name].sort(reverse=True)
+    print(f'tag[{tag_name}] has {tag_dict[tag_name]}')
+
+    current_post_list = []
+    ordered_list = json.load(open(os.path.join(_dir_prefix, 'ordered_list.json')))
+
+    for idx in tag_dict[tag_name]:
+        for item in ordered_list:
+            if item['idx'] == idx:
+                conf_json = os.path.join(_dir_prefix[:-5], item['path'], 'conf.json')
+                conf = json.load(open(conf_json))
+                conf['url'] = item['path']
+                dt = datetime.datetime.fromtimestamp(item['timestamp'])
+                conf['date_shorter'] = dt.strftime('%b. %d, %Y')
+                # print('  ', conf['date_shorter'])
+                current_post_list.append(conf)
+                print(item['idx'], conf['title'])
+
+    return render(request, "index.html", {'current_post_list': current_post_list, 'navigation': [], 'tag_cloud': []})
+
 
 def view_post(request, post_name):
     # print(post_name)
