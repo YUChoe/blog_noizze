@@ -111,7 +111,7 @@ def view_tags(request, tag_name):
 
 
 def view_post(request, post_name):
-    # print(post_name)
+    # print("view_post", post_name)
     # FIXIT
     if '.css.map' in post_name[-8:]:
         return HttpResponse(open(os.path.join(_dir_prefix, post_name)).read())
@@ -213,7 +213,9 @@ def view_post(request, post_name):
 
     return render(request, "post.html", {'conf': conf, 'md': md, 'post_name': post_name, 'navigation': navigation})
 
-
+def view_ads_txt(request):
+    return HttpResponse(open(os.path.join('static', 'ads.txt')).read())
+    
 def view_index(request, page_num=1):
     current_post_list = []
     paging_cnt = 10
